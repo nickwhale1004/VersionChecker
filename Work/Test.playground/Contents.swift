@@ -55,7 +55,7 @@ func checkString(_ s: String) throws {
         if char == "." {
             continue
         }
-        guard let _ = Int(String(char)) else {
+        guard let _ = UInt(String(char)) else {
             throw CompareError.invalidSymbols
         }
     }
@@ -78,8 +78,8 @@ func compareStringsAsValue(_ string1: String, and string2: String) throws -> Com
     //String comparison char by char
     for i in 0..<s1.count {
         //Checking for the validity of the entered data
-        guard let char1 = Int(String(s1[s1.index(s1.startIndex, offsetBy: i)])),
-              let char2 = Int(String(s2[s2.index(s2.startIndex, offsetBy: i)]))
+        guard let char1 = UInt(String(s1[s1.index(s1.startIndex, offsetBy: i)])),
+              let char2 = UInt(String(s2[s2.index(s2.startIndex, offsetBy: i)]))
         else {
             throw CompareError.invalidSymbols
         }
@@ -125,6 +125,7 @@ print("DATA VALIDITY TESTS:")
 testCompareVesrions("asd", and: ".1")
 testCompareVesrions("1", and: "asd")
 testCompareVesrions("", and: ".1")
+testCompareVesrions("-1", and: ".1")
 
 //Usuall test
 print("\nUSUALL TESTS:")

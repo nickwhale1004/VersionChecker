@@ -9,20 +9,18 @@ import UIKit
 import Foundation
 
 class AccountViewController: UIViewController {
-    
     @IBOutlet weak var userImageView: UIImageView!
     @IBOutlet weak var userNicknameLabel: UILabel!
     @IBOutlet weak var folowersLabel: UILabel!
     @IBOutlet weak var folowingLabel: UILabel!
     @IBOutlet weak var collectionView: UICollectionView!
+    
     let paddings: CGFloat = 20
     let countOfRowInLine: CGFloat = 3
     let cellSpacing: CGFloat = 10
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        
         
         collectionView.delegate = self
         collectionView.dataSource = self
@@ -43,6 +41,7 @@ extension AccountViewController: UICollectionViewDelegate, UICollectionViewDataS
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         var cell = collectionView.dequeueReusableCell(withReuseIdentifier: "UserPhotosCell", for: indexPath)
+        
         
         return cell
     }

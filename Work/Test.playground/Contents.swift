@@ -6,90 +6,18 @@ enum CompareError: Error {
 }
 
 func compareVersions(_ s1: String, and s2: String) throws -> ComparisonResult {
-    //Checking the version for the validity of the entered data
-    try checkString(s1)
-    try checkString(s2)
-    
-    //String splitting for component validation
-    var splitedString1 = s1.components(separatedBy: ".")
-    var splitedString2 = s2.components(separatedBy: ".")
-    
-    //Create additional sections if needed
-    //to bring the version to the same format
-    if splitedString1.count > splitedString2.count {
-        let tempCollection = [String](repeating: "0", count: splitedString1.count - splitedString2.count)
-        splitedString2 += tempCollection
+    if s1 == "" || s2 == "" { throw CompareError.emptyData }
+    try s1.forEach { char in if char == "." { return }
+        guard let _ = UInt(String(char)) else { throw  CompareError.invalidSymbols }
     }
-    else if splitedString2.count > splitedString1.count {
-        let tempCollection = [String](repeating: "0", count: splitedString2.count - splitedString1.count)
-        splitedString1 += tempCollection
+    try s2.forEach { char in if char == "." { return }
+        guard let _ = UInt(String(char)) else { throw  CompareError.invalidSymbols }
     }
+    let splitedS1 = s1.components(separatedBy: ".").map{$0[($0.firstIndex{$0 != "0"} ?? $0.startIndex)...]}
+    let splitedS2 = s2.components(separatedBy: ".").map{$0[($0.firstIndex{$0 != "0"} ?? $0.startIndex)...]}
     
-    //Bypass version section by section
-    for i in 0..<splitedString1.count {
-        //Interpreting an empty string as 0
-        if splitedString1[i] == "" {
-            splitedString1[i] = "0"
-        }
-        if splitedString2[i] == "" {
-            splitedString2[i] = "0"
-        }
-        
-        //Comparing each version section and handling the result
-        let compareResult = try compareStringsAsValue(splitedString1[i], and: splitedString2[i])
-    
-        switch compareResult {
-        case .orderedDescending:
-            return .orderedDescending
-        case .orderedAscending:
-            return .orderedAscending
-        default: break
-        }
-    }
-    return .orderedSame
-}
-
-func checkString(_ s: String) throws {
-    guard s != "" else { throw CompareError.emptyData }
-    for char in s {
-        if char == "." {
-            continue
-        }
-        guard let _ = UInt(String(char)) else {
-            throw CompareError.invalidSymbols
-        }
-    }
-}
-
-func compareStringsAsValue(_ string1: String, and string2: String) throws -> ComparisonResult {
-    var s1 = string1
-    var s2 = string2
-    
-    //Adding trailing zeros to bring strings into the same format
-    if s1.count > s2.count {
-        let tempZeros = String(repeating: "0", count: s1.count - s2.count)
-        s2 = tempZeros + s2
-    }
-    else if s2.count > s1.count {
-        let tempZeros = String(repeating: "0", count: s2.count - s1.count)
-        s1 = tempZeros + s1
-    }
-    
-    //String comparison char by char
-    for i in 0..<s1.count {
-        //Checking for the validity of the entered data
-        guard let char1 = UInt(String(s1[s1.index(s1.startIndex, offsetBy: i)])),
-              let char2 = UInt(String(s2[s2.index(s2.startIndex, offsetBy: i)]))
-        else {
-            throw CompareError.invalidSymbols
-        }
-        
-        if char1 > char2 {
-            return .orderedDescending
-        }
-        if char2 > char1 {
-            return .orderedAscending
-        }
+    if let res = zip(splitedS1.flatMap{$0 != "" ? $0 : "0"}, splitedS2.flatMap{$0 != "" ? $0 : "0"}).first(where: {$0.0 < $0.1 || $0.0 > $0.1}) {
+        if res.0 < res.1 { return .orderedAscending }; return .orderedDescending
     }
     return .orderedSame
 }
@@ -147,4 +75,3 @@ testCompareVesrions("..0.1", and: "0.0.0.1")
 print("\nBIG DATA TEST:")
 
 testCompareVesrions("3479023749023749023790479023749023790479023749023790470.343243443424234.3423423423423894238946892364896238946892364892368946246", and: "125393.32478723561087.2347868971325.37694")
-

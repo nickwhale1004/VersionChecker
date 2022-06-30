@@ -7,11 +7,11 @@ enum CompareError: Error {
 
 func compareVersions(_ s1: String, and s2: String) throws -> ComparisonResult {
     if s1 == "" || s2 == "" { throw CompareError.emptyData }
-    try s1.forEach { char in if char == "." { return }
-        guard let _ = UInt(String(char)) else { throw  CompareError.invalidSymbols }
+    try s1.forEach { if $0 == "." { return }
+        guard let _ = UInt(String($0)) else { throw  CompareError.invalidSymbols }
     }
-    try s2.forEach { char in if char == "." { return }
-        guard let _ = UInt(String(char)) else { throw  CompareError.invalidSymbols }
+    try s2.forEach { if $0 == "." { return }
+        guard let _ = UInt(String($0)) else { throw  CompareError.invalidSymbols }
     }
     let splitedS1 = s1.components(separatedBy: ".").map{$0[($0.firstIndex{$0 != "0"} ?? $0.startIndex)...]}
     let splitedS2 = s2.components(separatedBy: ".").map{$0[($0.firstIndex{$0 != "0"} ?? $0.startIndex)...]}

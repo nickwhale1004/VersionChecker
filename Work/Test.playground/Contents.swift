@@ -5,10 +5,12 @@ enum CompareError: Error {
 }
 
 func compareVersions(_ s1: String, _ s2: String) throws -> ComparisonResult {
-    try s1.forEach { if $0 == "." { return }
+    try s1.forEach {
+        if $0 == "." { return }
         guard let _ = UInt(String($0)) else { throw  CompareError.invalidSymbols }
     }
-    try s2.forEach { if $0 == "." { return }
+    try s2.forEach {
+        if $0 == "." { return }
         guard let _ = UInt(String($0)) else { throw  CompareError.invalidSymbols }
     }
     
@@ -34,7 +36,6 @@ func compareVersions(_ s1: String, _ s2: String) throws -> ComparisonResult {
         
         var iterator1 = substringS1.makeIterator()
         var iterator2 = substringS2.makeIterator()
-        
         for _ in 0 ..< max(substringS1.count, substringS2.count) {
             var safeChar1: String = ""
             if let char1 = iterator1.next() {
